@@ -1,0 +1,9 @@
+service,assumption,monthly_min_usd,monthly_max_usd,notes
+Amazon SES,"up to 10k emails/month, outbound + service overhead",1,5,"Primary channel, conservative buffer included"
+AWS Lambda,"planner + workers + event handlers",2,10,"Depends on retries and campaign cadence"
+Amazon SQS + DLQ,"message jobs queue + dead-letter queue",0.5,2,"Low at this volume"
+Amazon DynamoDB,"on-demand tables for jobs/senders/metrics",5,20,"Includes GSIs and moderate read/write burst"
+CloudWatch (logs/metrics/alarms),"ops visibility and alerting",8,25,"Main variable part is logs retention and volume"
+SNS + S3 + misc,"event fanout + 90-day archive + small extras",2,8,"Includes notifications and event storage"
+Reserve buffer,"unexpected spikes, troubleshooting, retries",15,25,"Cost guardrail to remain below budget cap"
+TOTAL,"all services combined",33.5,95,"Target budget corridor: <= $100/month"

@@ -1,0 +1,29 @@
+flowchart TD
+    A["Campaign Planner (EventBridge + Lambda)"] --> B["SQS MessageJobs Queue"]
+    B --> C["Lambda Sender Workers"]
+    C --> D["SES Primary Region"]
+    D --> E["Recipient Domains (Gmail/Outlook/Yahoo/Other)"]
+
+    D --> F["SES Events (bounce/complaint/deferred)"]
+    F --> G["SNS Topic"]
+    G --> H["Feedback Processor Lambda"]
+
+    H --> I["DynamoDB (tenant state, sender pool, quotas, job status)"]
+    A --> I
+    C --> I
+
+    H --> J["Suppression List (tenant + global)"]
+    J --> A
+    J --> C
+
+    C --> K["DLQ"]
+    K --> L["DLQ Triage/Replay Flow"]
+    L --> B
+
+    I --> M["CloudWatch Metrics/Logs"]
+    C --> M
+    H --> M
+    M --> N["CloudWatch Alarms + SNS Alerts"]
+    N --> O["Telegram/Email Notifications"]
+
+    D -. failover .-> P["SES Secondary Region (preconfigured)"]
